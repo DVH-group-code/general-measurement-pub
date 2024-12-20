@@ -1,0 +1,12 @@
++90ns<Min> => "main while": SyncWhile(reg"awg1Engine.hvi_stop" == 0) {
+    +260ns<Min> => "loop body": SyncMultiSequenceBlock {
+        Engine "awg1Engine" {
+            +10ns => "trigger awg1 ch1": ActionExecute([action"AWG1Trigger"])
+            +1000ns => "trigger awg1 ch2": ActionExecute([action"AWG2Trigger"])
+            +3000ns => "1us delay": Delay()
+        }
+        Engine "din" {
+            +10ns => "trigger DIN ch1": ActionExecute([action"DAQ1Trigger"])
+        }
+    }
+}

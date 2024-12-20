@@ -1,0 +1,37 @@
++90ns<Min> => "main while": SyncWhile(reg"awg1Engine.hvi_status" != 2) {
+    +820ns<Min> => "onoff loop": SyncWhile(reg"awg1Engine.hvi_status" == 1) {
+        +570ns<Min> => "core while": SyncWhile(reg"awg1Engine.hvi_cycle" < reg"awg1Engine.max_cycle") {
+            +260ns<Min> => "loop body": SyncMultiSequenceBlock {
+                Engine "awg1Engine" {
+                    +10ns => "FP Trigger ON": TriggerWrite(Trigger = [trigger"FrontPanelTrigger1"], Mode = IMMEDIATE, Value = ON)
+                    +20ns => "FP Trigger OFF": TriggerWrite(Trigger = [trigger"FrontPanelTrigger1"], Mode = IMMEDIATE, Value = OFF)
+                    +10ns => "trigger awg qubit": ActionExecute([action"AWG1Trigger", action"AWG2Trigger", action"AWG3Trigger", action"AWG4Trigger"])
+                    +10ns => "increase cycle counter": reg"awg1Engine.hvi_cycle" = reg"awg1Engine.hvi_cycle" + 1
+                    +20ns<?> => "wait for finish": WaitTime(reg"awg1Engine.finish_delay")
+                }
+                Engine "din" {
+                    +40ns<?> => "delay": WaitTime(reg"din.din_delay")
+                    +10ns => "trigger DIN ch": ActionExecute([action"DAQ2Trigger"])
+                }
+            }
+        }
+        +260ns<Min> => "finish": SyncMultiSequenceBlock {
+            Engine "awg1Engine" {
+                +10ns => "update status": reg"awg1Engine.hvi_status" = 0
+                +10ns => "update cycle": reg"awg1Engine.hvi_cycle" = 0
+            }
+            Engine "din" {}
+        }
+    }
+    +820ns<Min> => "inf loop": SyncWhile(reg"awg1Engine.hvi_status" == 3) {
+        +260ns<Min> => "inf loop body": SyncMultiSequenceBlock {
+            Engine "awg1Engine" {
+                +10ns => "FP Trigger ON": TriggerWrite(Trigger = [trigger"FrontPanelTrigger1"], Mode = IMMEDIATE, Value = ON)
+                +20ns => "FP Trigger OFF": TriggerWrite(Trigger = [trigger"FrontPanelTrigger1"], Mode = IMMEDIATE, Value = OFF)
+                +10ns => "trigger awg qubit": ActionExecute([action"AWG1Trigger", action"AWG2Trigger", action"AWG3Trigger", action"AWG4Trigger"])
+                +20ns<?> => "wait for finish": WaitTime(reg"awg1Engine.finish_delay")
+            }
+            Engine "din" {}
+        }
+    }
+}

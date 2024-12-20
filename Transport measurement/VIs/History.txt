@@ -1,0 +1,5 @@
+2017.8-2018.5
+Create
+20180522
+Backed up, after will utilize a modular design of the program.
+Each measurement control value will be controlled by a single VI where different devices can be used and chose.

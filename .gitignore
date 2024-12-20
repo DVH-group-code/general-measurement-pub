@@ -1,0 +1,6 @@
+*.mnu
+builds/transport main/
+*.pyc
+
+qubit measurement/LabView program/qubit measurement main.aliases
+*.iml
